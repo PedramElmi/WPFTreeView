@@ -1,21 +1,52 @@
-﻿<Window x:Class="WPFTreeView.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFTreeView"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <TreeView x:Name="FolderView">
-            <TreeView.Resources>
+﻿<Window
+    x:Class="WPFTreeView.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:WPFTreeView"
+    mc:Ignorable="d"
+    Title="MainWindow"
+    Height="450"
+    Width="800">
 
+    <Window.Resources>
+        <local:ItemTypeToImageConverter
+            x:Key="Type2Image" />
+    </Window.Resources>
+
+    <Window.DataContext>
+        <local:DirectoryStructureViewModel />
+    </Window.DataContext>
+    
+    <Grid>
+        <TreeView
+            x:Name="FolderView"
+            ItemsSource="{Binding Path=Items}">
+            <TreeView.ItemContainerStyle>
                 <Style
                     TargetType="{x:Type TreeViewItem}">
-                    
+                    <Setter
+                        Property="IsExpanded"
+                        Value="{Binding Path=IsExpanded, Mode=TwoWay}" />
                 </Style>
-                
-            </TreeView.Resources>
+            </TreeView.ItemContainerStyle>
+
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=Children}">
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <Image
+                            Width="20"
+                            Margin="3"
+                            Source="{Binding Path=Type, Converter={StaticResource ResourceKey=Type2Image}}"/>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Text="{Binding Path=Name}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            
         </TreeView>
-    </StackPanel>
+    </Grid>
 </Window>
